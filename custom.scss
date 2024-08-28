@@ -1,0 +1,104 @@
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.red {
+    border: 1px solid red;
+}
+
+.green {
+    border: 1px solid green;
+}
+
+.banner {
+    border: 1px solid red;
+    height: 500px;
+    /* width: 500px; */
+    padding: 20px;
+
+    background-image: url('./banner.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+
+    .about-sign-in {
+        height: 80px;
+        width: 100%;
+        text-align: end;
+
+        .sign-in {
+            margin-top: 60px;
+            margin-right: 25px;
+            border: 1px solid green;
+            border-radius: 20px;
+        }
+
+        .about,
+        .sign-in {
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            padding: 7px 15px;
+            text-transform: uppercase;
+        }
+    }
+
+    .logo {
+        background-image: url('./logo.jpg');
+        background-position: center;
+        background-repeat: no-repeat;
+        margin-top: 40px;
+        height: 100px;
+
+
+    }
+
+    .text {
+        text-align: center;
+
+        span {
+            font-size: 20px;
+        }
+
+    }
+
+
+    .btn-start-now {
+        text-align: center;
+
+        button {
+            text-transform: uppercase;
+            /* background-color: green; */
+            border: 1px solid green;
+            margin-top: 25px;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+    }
+
+    .content-center {
+
+        .left,
+        .right,
+        .center {
+            display: inline-block;
+            text-align: center;
+            width: 33%;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        img {
+            width: 30px;
+            height: 30px;
+        }
+
+        span {
+            display: block;
+            ma
+        }
+    }
+
+}
