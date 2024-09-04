@@ -12,7 +12,7 @@ import { path } from '../utils'
 
 import Home from '../routes/Home';
 // import Login from '../routes/Login';
-import Login from './Auth/Login2';
+import Login from './Auth/Login';
 import Header from './Header/Header';
 import System from '../routes/System';
 

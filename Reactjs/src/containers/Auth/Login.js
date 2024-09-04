@@ -7,7 +7,9 @@ import * as actions from "../../store/actions";
 
 import './Login.scss';
 import { values } from 'lodash';
-import handleLogin from '../../services/userService';
+// import userService from '../../services/userService';
+import userService from '../../services/userService';
+
 
 class Login extends Component {
     constructor(props) {
@@ -30,7 +32,7 @@ class Login extends Component {
         })
         // console.log('username:', this.state.username, 'password:', this.state.password)
         try {
-            let data = await handleLogin(this.state.username, this.state.password);
+            let data = await userService.handleLoginService(this.state.username, this.state.password);
             if (data && data.errCode != 0) {
                 this.setState({
                     errMessage: data.message
@@ -41,6 +43,7 @@ class Login extends Component {
                 console.log('login succeed!')
             }
         } catch (error) {
+            console.log(error)
             if (error.response) {
                 if (error.response.data) {
                     this.setState({
@@ -83,7 +86,7 @@ class Login extends Component {
                                         name='password' />
                                     <span
                                         onClick={() => this.handleShowHide()}>
-                                        <i class={this.state.isShowPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'}></i>
+                                        <i className={this.state.isShowPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'}></i>
                                     </span>
 
                                 </div>

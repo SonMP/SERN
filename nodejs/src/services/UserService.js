@@ -99,25 +99,27 @@ let createNewUser = (data) => {
             if (check === true) {
                 resolve({
                     errCode: 1,
-                    message: 'Your email is used!, plz use another email!',
+                    errMessage: 'Your email is used!, plz use another email!',
                 })
+            } else {
+                let hashPasswordFromBcrypt = await hashUserPassword(data.password);
+                await db.User.create({
+                    email: data.email,
+                    passWord: hashPasswordFromBcrypt,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    address: data.address,
+                    phoneNumber: data.phoneNumber,
+                    gender: data.gender === "1" ? true : false,
+                    roleId: data.roleId,
+                    positionId: data.positionId,
+                })
+                resolve({
+                    errCode: 0,
+                    message: 'OK'
+                });
             }
-            let hashPasswordFromBcrypt = await hashUserPassword(data.password);
-            await db.User.create({
-                email: data.email,
-                passWord: hashPasswordFromBcrypt,
-                firstName: data.firstName,
-                lastName: data.lastName,
-                address: data.address,
-                phoneNumber: data.phoneNumber,
-                gender: data.gender === "1" ? true : false,
-                roleId: data.roleId,
-                positionId: data.positionId,
-            })
-            resolve({
-                errCode: 0,
-                message: 'OK'
-            });
+
         } catch (e) {
             reject(e);
         }
@@ -144,7 +146,7 @@ let deleteUser = (userId) => {
             if (!foundUser) {
                 resolve({
                     errCode: 2,
-                    message: 'User is not exist'
+                    errMessage: 'User is not exist'
                 })
             }
             // if (foundUser) {
@@ -155,7 +157,7 @@ let deleteUser = (userId) => {
             })
             resolve({
                 errCode: 0,
-                message: 'User deleted!'
+                errMessage: 'User deleted!'
             });
 
         } catch (e) {
@@ -167,6 +169,7 @@ let deleteUser = (userId) => {
 let editUser = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
+
             if (!data.id) {
                 resolve({
                     errCode: 2,
