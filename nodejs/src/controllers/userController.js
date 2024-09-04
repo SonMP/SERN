@@ -20,7 +20,7 @@ let handleLogin = async (req, res) => {
 }
 
 let handleGetAllUsers = async (req, res) => {
-    let id = req.body.id;
+    let id = req.query.id;
     if (!id) {
         return res.status(200).json({
             errCode: 1,
@@ -36,4 +36,30 @@ let handleGetAllUsers = async (req, res) => {
     })
 }
 
-module.exports = { handleLogin, handleGetAllUsers }
+let handleCreateNewUser = async (req, res) => {
+    console.log('req.body:', req.body);
+    let message = await UserService.createNewUser(req.body);
+    console.log('Check email:', req.body.email);
+    console.log(message);
+    return res.status(200).json(message);
+}
+
+let handleEditUser = async (req, res) => {
+    let data = req.body;
+    let message = await UserService.editUser(data);
+    return res.status(200).json(message)
+}
+
+let handleDeleteUser = async (req, res) => {
+    let userId = await req.body.id;
+    if (!userId) {
+        return res.status(200).json({
+            errCode: 1,
+            message: 'Missing params!'
+        })
+    }
+    let message = await UserService.deleteUser(userId);
+
+    return res.status(200).json(message)
+}
+module.exports = { handleLogin, handleGetAllUsers, handleCreateNewUser, handleEditUser, handleDeleteUser }
