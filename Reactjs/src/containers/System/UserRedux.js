@@ -3,9 +3,13 @@ import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 class ProductManage extends Component {
 
-    state = {
+    constructor(props) {
+        super(props);
+        this.state = {
 
+        }
     }
+
 
     componentDidMount() {
     }
@@ -13,7 +17,15 @@ class ProductManage extends Component {
 
     render() {
         return (
-            <div className="text-center" >Manage products</div>
+            <div className='user-redux-container'>
+                <div className="title" >
+                    UserRedux
+                </div>
+                <div className='user-redux-body'>
+                    <div>Thêm mới người dùng</div>
+                </div>
+            </div>
+
         )
     }
 
