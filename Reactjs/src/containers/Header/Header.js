@@ -11,7 +11,7 @@ import './Header.scss';
 class Header extends Component {
 
     handleChangeLanguages = (language) => {
-        this.props.changeLanguageAppRedux(language);
+        this.props.changeLanguageApp(language);
     }
     render() {
         const { processLogout, language, userInfo } = this.props;
@@ -51,7 +51,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         processLogout: () => dispatch(actions.processLogout()),
-        changeLanguageAppRedux: (language) => dispatch(actions.changeLanguageApp(language))
+        changeLanguageApp: (language) => dispatch(actions.changeLanguageApp(language))
     };
 };
 
