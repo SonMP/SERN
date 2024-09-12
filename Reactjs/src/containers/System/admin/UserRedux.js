@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import userService from '../../../services/userService';
-import { LANGUAGES } from '../../../utils';
+import { LANGUAGES, CRUD_ACTIONS, CommonUtils } from '../../../utils';
 import * as action from '../../../store/actions';
 import './UserRedux.scss';
 
 import lightbox from 'lightbox2';
-import $ from 'jquery';
 import TableManageUser from './TableManageUser';
 import 'lightbox2/dist/css/lightbox.css';
 import 'lightbox2';
@@ -26,7 +25,7 @@ class ProductManage extends Component {
             previewImageUrl: '',
 
             email: '',
-            password: '',
+            passWord: '',
             firstName: '',
             lastName: '',
             address: '',
@@ -34,7 +33,10 @@ class ProductManage extends Component {
             gender: '',
             role: '',
             position: '',
-            avatar: ''
+            avatar: '',
+
+            action: '',
+            userEditId: '',
         }
     }
 
@@ -80,29 +82,35 @@ class ProductManage extends Component {
             })
         }
         if (prevProps.listUsers !== this.props.listUsers) {
+            let genderRedux = this.props.genderRedux;
+            let positionRedux = this.props.positionRedux;
+            let roleRedux = this.props.roleRedux;
             this.setState({
                 email: '',
-                password: '',
+                passWord: '',
                 firstName: '',
                 lastName: '',
                 address: '',
                 phoneNumber: '',
-                gender: '',
-                role: '',
-                position: '',
-                avatar: ''
+                gender: genderRedux && genderRedux.length > 0 ? genderRedux[0].key : '',
+                role: roleRedux && roleRedux.length > 0 ? roleRedux[0].key : '',
+                position: positionRedux && positionRedux.length > 0 ? positionRedux[0].key : '',
+                avatar: '',
+                action: CRUD_ACTIONS.CREATE,
+                previewImageUrl: ''
             })
         }
     }
 
-    handleOnChangeImage = (event) => {
+    handleOnChangeImage = async (event) => {
         let data = event.target.files;
         let file = data[0];
         if (file) {
+            let base64 = await CommonUtils.getBase64(file);
             let objectUrl = URL.createObjectURL(file);
             this.setState({
                 previewImageUrl: objectUrl,
-                avatar: objectUrl
+                avatar: base64
             })
         }
     }
@@ -117,7 +125,7 @@ class ProductManage extends Component {
 
     isValidateInput = () => {
         let isValidate = true;
-        let userArr = ['email', 'password', 'firstName', 'lastName', 'address', 'phoneNumber'];
+        let userArr = ['email', 'passWord', 'firstName', 'lastName', 'address', 'phoneNumber'];
         for (let i = 0; i < userArr.length; i++) {
             if (!this.state[userArr[i]]) {
                 alert('Missing parameter : ' + userArr[i]);
@@ -127,27 +135,65 @@ class ProductManage extends Component {
         }
         return isValidate;
     }
-    handleCreateNewUser = () => {
+    handleSaveNewUser = () => {
         let check = this.isValidateInput();
-        let { email, password, firstName, lastName, address, phoneNumber, role, position, gender, avatar } = this.state;
+        let { email, passWord, firstName, lastName, address, phoneNumber, role, position, gender, avatar, action, userEditId } = this.state;
         if (check === false) return;
-        this.props.createNewUserRedux({
-            email: email,
-            passWord: password,
-            firstName: firstName,
-            lastName: lastName,
-            address: address,
-            phoneNumber: phoneNumber,
-            gender: gender,
-            roleId: role,
-            positionId: position,
-            image: avatar
-        });
+        if (action === CRUD_ACTIONS.CREATE) {
+            this.props.createNewUserRedux({
+                email: email,
+                passWord: passWord,
+                firstName: firstName,
+                lastName: lastName,
+                address: address,
+                phoneNumber: phoneNumber,
+                gender: gender,
+                roleId: role,
+                positionId: position,
+                image: avatar
+            });
+        }
+        if (action === CRUD_ACTIONS.EDIT) {
+            this.props.editUserRedux({
+                id: userEditId,
+                firstName: firstName,
+                lastName: lastName,
+                address: address,
+                phoneNumber: phoneNumber,
+                gender: gender,
+                roleId: role,
+                positionId: position,
+                image: avatar
+            })
+        }
 
     }
+    handleEditUserFromParent = (user) => {
+        // console.log('Check user from parent:', user);
+        let imageBase64 = '';
+        if (user.image) {
+            imageBase64 = new Buffer(user.image, 'base64').toString('binary');
+        }
+
+        this.setState({
+            userEditId: user.id,
+            email: user.email,
+            passWord: 'HARDCODE',
+            firstName: user.firstName,
+            lastName: user.lastName,
+            address: user.address,
+            phoneNumber: user.phoneNumber,
+            gender: user.gender,
+            role: user.roleId,
+            avatar: '',
+            position: user.positionId,
+            action: CRUD_ACTIONS.EDIT,
+            previewImageUrl: imageBase64,
+        })
+    }
     render() {
-        let { genderArr, positionArr, roleArr, previewImageUrl, email, passWord, firstName, lastName, phoneNumber, address, role, position, gender, avatar } = this.state;
-        // console.log('reduxxx check:', this.props.roleRedux);
+        let { genderArr, positionArr, roleArr, previewImageUrl, email, passWord, firstName, lastName, phoneNumber, address, role, position, gender, avatar, action, userEditId } = this.state;
+        console.log('reduxxx check:', this.state.avatar);
         let language = this.props.language;
         let isLoadingGender = this.props.isLoadingGender;
         return (
@@ -166,13 +212,15 @@ class ProductManage extends Component {
                                 <label><FormattedMessage id='manage-user.email' /></label>
                                 <input className='form-control' type='email'
                                     value={email}
-                                    onChange={(event) => this.onChangeInput(event, 'email')} />
+                                    onChange={(event) => this.onChangeInput(event, 'email')}
+                                    disabled={action === CRUD_ACTIONS.EDIT ? true : false} />
                             </div>
                             <div className='col-3'>
                                 <label><FormattedMessage id='manage-user.password' /></label>
                                 <input className='form-control' type='password'
                                     value={passWord}
-                                    onChange={(event) => this.onChangeInput(event, 'password')} />
+                                    onChange={(event) => this.onChangeInput(event, 'passWord')}
+                                    disabled={action === CRUD_ACTIONS.EDIT ? true : false} />
                             </div>
                             <div className='col-3'>
                                 <label><FormattedMessage id='manage-user.first-name' /></label>
@@ -201,6 +249,7 @@ class ProductManage extends Component {
                             <div className='col-3'>
                                 <label> <FormattedMessage id='manage-user.gender' /></label>
                                 <select className='form-control'
+                                    value={gender}
                                     onChange={(event) => this.onChangeInput(event, 'gender')}>
                                     {genderArr && genderArr.length > 0 &&
                                         genderArr.map((item, index) => {
@@ -214,6 +263,7 @@ class ProductManage extends Component {
                             <div className='col-3'>
                                 <label> <FormattedMessage id='manage-user.position' /></label>
                                 <select className='form-control'
+                                    value={position}
                                     onChange={(event) => this.onChangeInput(event, 'position')}>
                                     {positionArr && positionArr.length > 0 &&
                                         positionArr.map((item, index) => {
@@ -226,6 +276,7 @@ class ProductManage extends Component {
                             <div className='col-3'>
                                 <label> <FormattedMessage id='manage-user.role' /></label>
                                 <select className='form-control'
+                                    value={role}
                                     onChange={(event) => this.onChangeInput(event, 'role')}>
                                     {roleArr && roleArr.length > 0 &&
                                         roleArr.map((item, index) => {
@@ -242,20 +293,22 @@ class ProductManage extends Component {
                                         onChange={(event) => this.handleOnChangeImage(event)}
                                     />
                                     <label className='label-upload' htmlFor='previewImg'><FormattedMessage id='manage-user.upload' /> <i class="fa-solid fa-upload"></i></label>
-                                    {previewImageUrl && (
-                                        <a href={previewImageUrl} data-lightbox="example-set" data-title="My caption">
-                                            <div className='preview-image' style={{ backgroundImage: `url(${previewImageUrl})` }}></div>
-                                        </a>
-                                    )}
+                                    {/* {previewImageUrl && ( */}
+                                    <a href={previewImageUrl} data-lightbox="example-set" data-title="My caption">
+                                        <div className='preview-image' style={{ backgroundImage: `url(${previewImageUrl})` }}></div>
+                                    </a>
+                                    {/* )} */}
                                 </div>
                             </div>
-                            <div className='col-12 my-3'>
-                                <button className='btn btn-primary' onClick={() => this.handleCreateNewUser()}>
-                                    <FormattedMessage id='manage-user.save' />
+                            <div className='col-12 mb-3'>
+                                <button className={action === CRUD_ACTIONS.EDIT ? 'btn btn-warning' : 'btn btn-primary'} onClick={() => this.handleSaveNewUser()}>
+                                    {action === CRUD_ACTIONS.EDIT ? <FormattedMessage id='manage-user.edit' /> : <FormattedMessage id='manage-user.save' />}
                                 </button>
                             </div>
-                            <div className='col-12 my-5'>
-                                <TableManageUser />
+                            <div className='col-12 mb-5'>
+                                <TableManageUser
+                                    handleEditUserFromParent={this.handleEditUserFromParent}
+                                />
                             </div>
                         </div>
 
@@ -287,6 +340,7 @@ const mapDispatchToProps = dispatch => {
         getPositionStart: () => dispatch(action.fetchPositionStart()),
         getRoleStart: () => dispatch(action.fetchRoleStart()),
         createNewUserRedux: (data) => dispatch(action.createNewUserStart(data)),
+        editUserRedux: (user) => dispatch(action.editUserStart(user)),
     };
 };
 

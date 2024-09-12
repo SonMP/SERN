@@ -49,6 +49,7 @@
         "role": "Role",
         "image": "Image",
         "save": "Save user",
+        "edit": "Edit user",
         "upload": "Upload"
     }
 }

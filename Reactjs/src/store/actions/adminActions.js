@@ -135,7 +135,7 @@ export const deleteUser = (id) => {
         try {
             let res = await userService.deleteUserService(id);
             if (res && res.errCode === 0) {
-                toast.info('User deleted!');
+                toast.warn('User deleted!');
                 dispatch(deleteUserSuccess());
                 dispatch(fetchAllUserStart());
             }
@@ -155,4 +155,30 @@ export const deleteUserSuccess = (userData) => ({
 
 export const deleteUserFailed = () => ({
     type: actionTypes.FETCH_ALL_USER_FAILED
+})
+
+export const editUserStart = (user) => {
+    return (async (dispatch, getState) => {
+        try {
+            let res = await userService.editUserService(user);
+            if (res && res.errCode === 0) {
+                toast.info('Update user completed!');
+                dispatch(editUserSuccess());
+                dispatch(fetchAllUserStart());
+            }
+
+        } catch (e) {
+            console.log(e);
+            toast.error('Edit failed!');
+            dispatch(editUserFailed());
+        }
+    })
+}
+
+export const editUserSuccess = () => ({
+    type: actionTypes.EDIT_NEW_USER_SUCCESS,
+})
+
+export const editUserFailed = () => ({
+    type: actionTypes.EDIT_NEW_USER_FAILED,
 })
