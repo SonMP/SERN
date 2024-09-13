@@ -59,8 +59,11 @@ class TableManageUser extends Component {
                                     <td>{item.firstName}</td>
                                     <td>{item.lastName}</td>
                                     <td>{item.address}</td>
-                                    <button className='btn-edit' onClick={() => this.handleEditUser(item)} ><i class="fa-solid fa-pencil"></i></button>
-                                    <button className='btn-delete' onClick={() => this.handleDeleteUser(item)}><i class="fa-solid fa-trash"></i></button>
+                                    <td>
+                                        <button className='btn-edit' onClick={() => this.handleEditUser(item)} ><i class="fa-solid fa-pencil"></i></button>
+                                        <button className='btn-delete' onClick={() => this.handleDeleteUser(item)}><i class="fa-solid fa-trash"></i></button>
+                                    </td>
+
                                 </tr>
                             )
                         })}

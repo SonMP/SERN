@@ -64,21 +64,21 @@ class ProductManage extends Component {
             let genderRedux = this.props.genderRedux;
             this.setState({
                 genderArr: genderRedux,
-                gender: genderRedux && genderRedux.length > 0 ? genderRedux[0].key : '',
+                gender: genderRedux && genderRedux.length > 0 ? genderRedux[0].keyMap : '',
             })
         }
         if (prevProps.positionRedux !== this.props.positionRedux) {
             let positionRedux = this.props.positionRedux;
             this.setState({
                 positionArr: positionRedux,
-                position: positionRedux && positionRedux.length > 0 ? positionRedux[0].key : '',
+                position: positionRedux && positionRedux.length > 0 ? positionRedux[0].keyMap : '',
             })
         }
         if (prevProps.roleRedux !== this.props.roleRedux) {
             let roleRedux = this.props.roleRedux;
             this.setState({
                 roleArr: roleRedux,
-                role: roleRedux && roleRedux.length > 0 ? roleRedux[0].key : ''
+                role: roleRedux && roleRedux.length > 0 ? roleRedux[0].keyMap : ''
             })
         }
         if (prevProps.listUsers !== this.props.listUsers) {
@@ -92,9 +92,9 @@ class ProductManage extends Component {
                 lastName: '',
                 address: '',
                 phoneNumber: '',
-                gender: genderRedux && genderRedux.length > 0 ? genderRedux[0].key : '',
-                role: roleRedux && roleRedux.length > 0 ? roleRedux[0].key : '',
-                position: positionRedux && positionRedux.length > 0 ? positionRedux[0].key : '',
+                gender: genderRedux && genderRedux.length > 0 ? genderRedux[0].keyMap : '',
+                role: roleRedux && roleRedux.length > 0 ? roleRedux[0].keyMap : '',
+                position: positionRedux && positionRedux.length > 0 ? positionRedux[0].keyMap : '',
                 avatar: '',
                 action: CRUD_ACTIONS.CREATE,
                 previewImageUrl: ''
@@ -166,7 +166,6 @@ class ProductManage extends Component {
                 image: avatar
             })
         }
-
     }
     handleEditUserFromParent = (user) => {
         // console.log('Check user from parent:', user);
@@ -193,7 +192,7 @@ class ProductManage extends Component {
     }
     render() {
         let { genderArr, positionArr, roleArr, previewImageUrl, email, passWord, firstName, lastName, phoneNumber, address, role, position, gender, avatar, action, userEditId } = this.state;
-        console.log('reduxxx check:', this.state.avatar);
+        // console.log('reduxxx check:', this.state.firstName);
         let language = this.props.language;
         let isLoadingGender = this.props.isLoadingGender;
         return (
@@ -254,7 +253,7 @@ class ProductManage extends Component {
                                     {genderArr && genderArr.length > 0 &&
                                         genderArr.map((item, index) => {
                                             return (
-                                                <option key={index} value={item.key}> {language === LANGUAGES.VI ? item.valueVi : item.valueEn}</option>
+                                                <option key={index} value={item.keyMap}> {language === LANGUAGES.VI ? item.valueVi : item.valueEn}</option>
                                             )
                                         })}
                                 </select>
@@ -268,7 +267,7 @@ class ProductManage extends Component {
                                     {positionArr && positionArr.length > 0 &&
                                         positionArr.map((item, index) => {
                                             return (
-                                                <option key={index} value={item.key}>{language === LANGUAGES.VI ? item.valueVi : item.valueEn} </option>
+                                                <option key={index} value={item.keyMap}>{language === LANGUAGES.VI ? item.valueVi : item.valueEn} </option>
                                             )
                                         })}
                                 </select>
@@ -281,7 +280,7 @@ class ProductManage extends Component {
                                     {roleArr && roleArr.length > 0 &&
                                         roleArr.map((item, index) => {
                                             return (
-                                                <option key={index} value={item.key}>{language === LANGUAGES.VI ? item.valueVi : item.valueEn} </option>
+                                                <option key={index} value={item.keyMap}>{language === LANGUAGES.VI ? item.valueVi : item.valueEn} </option>
                                             )
                                         })}
                                 </select>

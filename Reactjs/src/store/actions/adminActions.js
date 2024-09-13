@@ -108,7 +108,9 @@ export const fetchAllUserStart = () => {
     return async (dispatch, getState) => {
         try {
             let res = await userService.getAllUsers('ALL');
-            console.log('check responseL', res);
+            // console.log('check response:', res);
+            let res2 = userService.getTopDoctorService('');
+            console.log('dang check', res2);
             if (res && res.errCode === 0) {
                 dispatch(fetchAllUserSuccess(res.users.reverse()));
             } else {
@@ -181,4 +183,31 @@ export const editUserSuccess = () => ({
 
 export const editUserFailed = () => ({
     type: actionTypes.EDIT_NEW_USER_FAILED,
+})
+
+
+export const fetchTopDoctor = () => {
+    return (async (dispatch, getState) => {
+        try {
+            let res = await userService.getTopDoctorService('');
+            console.log(res);
+            if (res && res.errCode === 0) {
+                dispatch(fetchTopDocTorSuccess(res.data))
+            } else {
+                dispatch(fetchTopDoctorFailed())
+            }
+        } catch (e) {
+            console.log(e);
+            dispatch(fetchTopDoctorFailed())
+        }
+    })
+}
+
+export const fetchTopDocTorSuccess = (dataDoctor) => ({
+    type: actionTypes.FETCH_TOP_DOCTOR_SUCCESS,
+    data: dataDoctor
+})
+
+export const fetchTopDoctorFailed = () => ({
+    type: actionTypes.FETCH_TOP_DOCTOR_FAILED
 })

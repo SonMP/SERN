@@ -100,7 +100,8 @@ let createNewUser = (data) => {
                     errMessage: 'Your email is used!, plz use another email!',
                 })
             } else {
-                let hashPasswordFromBcrypt = await hashUserPassword(data.password);
+                let hashPasswordFromBcrypt = await hashUserPassword(data.passWord);
+                // console.log(data.image);
                 await db.User.create({
                     email: data.email,
                     passWord: hashPasswordFromBcrypt,
@@ -108,9 +109,10 @@ let createNewUser = (data) => {
                     lastName: data.lastName,
                     address: data.address,
                     phoneNumber: data.phoneNumber,
-                    gender: data.gender === "1" ? true : false,
+                    gender: data.gender,
                     roleId: data.roleId,
                     positionId: data.positionId,
+                    image: data.image
                 })
                 resolve({
                     errCode: 0,
@@ -127,8 +129,10 @@ let createNewUser = (data) => {
 let hashUserPassword = (password) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let hashPassword = await bcrypt.hashSync(password, salt);
-            resolve(hashPassword);
+            if (password) {
+                let hashPassword = await bcrypt.hashSync(password, salt);
+                resolve(hashPassword);
+            }
         } catch (e) {
             reject(e);
         }
@@ -167,8 +171,8 @@ let deleteUser = (userId) => {
 let editUser = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-
-            if (!data.id) {
+            // console.log('da den day')
+            if (!data.id || !data.gender || !data.roleId || !data.positionId) {
                 resolve({
                     errCode: 2,
                     message: 'Missing required parameters'
@@ -179,9 +183,17 @@ let editUser = (data) => {
                 raw: false
             })
             if (user) {
+                // console.log('check', data.image);
                 user.firstName = data.firstName;
                 user.lastName = data.lastName;
                 user.address = data.address;
+                user.phoneNumber = data.phoneNumber;
+                user.gender = data.gender;
+                user.roleId = data.roleId;
+                user.positionId = data.positionId;
+                if (data.image) {
+                    user.image = data.image;
+                }
                 await user.save();
                 resolve({
                     errCode: 0,
