@@ -7,9 +7,9 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import doctorImg1 from "../../../assets/doctor/img-doctor.png";
 import * as action from "../../../store/actions";
-import { LANGUAGES } from '../../../utils';
+import { LANGUAGES, path } from '../../../utils';
 import { FormattedMessage } from 'react-intl';
-
+import { withRouter } from 'react-router-dom';
 
 class OutStandingDoctor extends Component {
 
@@ -25,12 +25,17 @@ class OutStandingDoctor extends Component {
             doctorArr: this.props.doctors
         })
     }
+
+    handleViewDetailDoctor = (doctor) => {
+        console.log('doctor:', doctor);
+        this.props.history.push(`/detail-doctor/${doctor.id}`)
+    }
     render() {
         let { doctorArr } = this.state;
         let language = this.props.language;
-        console.log('nn', language);
-        console.log(doctorArr);
-        console.log('dasda', this.props.doctors);
+        // console.log('nn', language);
+        // console.log(doctorArr);
+        // console.log('dasda', this.props.doctors);
         return (
             <div>
                 <div className='section-share section-outstanding-doctor'>
@@ -53,9 +58,9 @@ class OutStandingDoctor extends Component {
                                         }
 
                                         return (
-                                            <div className='section-customize' key={index}>
+                                            <div className='section-customize doctor' key={index} onClick={() => this.handleViewDetailDoctor(item)}>
                                                 <div className='customize-border'>
-                                                    <img src={imageBase64} />
+                                                    <img className='image-doctor' src={imageBase64} />
                                                     <div> {language === LANGUAGES.VI ? nameVi : nameEn} </div>
                                                     <div>Cơ xương khớp</div>
                                                 </div>
@@ -88,4 +93,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(OutStandingDoctor);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(OutStandingDoctor));
