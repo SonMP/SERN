@@ -3,12 +3,12 @@ import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import * as action from '../../../store/actions';
 import './ManageDoctor.scss';
-import { ListFormat } from 'typescript';
 
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
-import { LANGUAGES } from '../../../utils';
+import { CRUD_ACTIONS, LANGUAGES } from '../../../utils';
 import 'react-markdown-editor-lite/lib/index.css';
+import userService from '../../../services/userService';
 // import { Select } from 'react-select/dist/Select-fd7cb895.cjs.prod';
 
 import Select from 'react-select';
@@ -26,7 +26,8 @@ class ManageDoctor extends Component {
             contentHTML: '',
             selectedOption: '',
             description: '',
-            listDoctors: []
+            listDoctors: [],
+            hasOldData: false
         }
     }
     componentDidMount() {
@@ -69,17 +70,43 @@ class ManageDoctor extends Component {
         })
     }
     handleSaveContentMarkdown = () => {
+        let { hasOldData } = this.state;
         this.props.saveDetailDoctor({
             contentHTML: this.state.contentHTML,
             contentMarkdown: this.state.contentMarkdown,
             description: this.state.description,
-            doctorId: this.state.selectedOption.value
+            doctorId: this.state.selectedOption.value,
+            action: hasOldData === true ? CRUD_ACTIONS.EDIT : CRUD_ACTIONS.CREATE
+        })
+        this.setState({
+            contentMarkdown: '',
+            contentHTML: '',
+            selectedOption: '',
+            description: '',
+            hasOldData: false
         })
     }
-    handleChange = selectedOption => {
+    handleChangeSelected = async (selectedOption) => {
         this.setState({
             selectedOption
         })
+        let res = await userService.getDetailInforDoctor(selectedOption.value);
+        if (res && res.data && res.data.Markdown) {
+            let markdown = res.data.Markdown
+            this.setState({
+                contentMarkdown: markdown.contentMarkdown,
+                contentHTML: markdown.contentHTML,
+                description: markdown.description,
+                hasOldData: true,
+            })
+        } else {
+            this.setState({
+                contentMarkdown: '',
+                contentHTML: '',
+                description: '',
+                hasOldData: false,
+            })
+        }
     }
     handleOnChangeDesc = (event) => {
         this.setState({
@@ -87,6 +114,7 @@ class ManageDoctor extends Component {
         })
     }
     render() {
+        let { hasOldData } = this.state;
         let language = this.props.language;
         // console.log('ec', this.state.listDoctors);
         return (
@@ -99,7 +127,7 @@ class ManageDoctor extends Component {
                         <label>Chọn bác sĩ</label>
                         <Select
                             value={this.state.selectedOption}
-                            onChange={this.handleChange}
+                            onChange={this.handleChangeSelected}
                             options={this.state.listDoctors} />
                     </div>
                     <div className='content-right form-group'>
@@ -115,13 +143,14 @@ class ManageDoctor extends Component {
                         style={{ height: '500px' }}
                         renderHTML={text => mdParser.render(text)}
                         onChange={this.handleEditorChange}
+                        value={this.state.contentMarkdown}
                     />
                 </div>
-                <button className='save-content-doctor'
+                <button className={hasOldData === true ? 'save-content-doctor' : 'create-content-doctor'}
                     onClick={() => this.handleSaveContentMarkdown()}>
-                    Save
+                    {hasOldData === true ? <span>Lưu thông tin</span> : <span>Tạo thông tin</span>}
                 </button>
-            </div>
+            </div >
 
         );
     }
