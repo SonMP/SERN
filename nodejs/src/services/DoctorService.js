@@ -1,5 +1,7 @@
 import db from "../models";
-
+import _ from 'lodash';
+require('dotenv').config();
+const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
 let getTopDoctorHomeService = (limitInput) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -49,19 +51,35 @@ let getAllDocTor = () => {
 let postInforDoctorService = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            // console.log(data);
-            if (!data.contentHTML || !data.contentMarkdown) {
+            if (!data && !data.contentHTML || !data.contentMarkdown && !data.action) {
                 resolve({
                     errCode: 1,
                     errMessage: 'Missing parameter'
                 })
             } else {
-                await db.Markdown.create({
-                    contentHTML: data.contentHTML,
-                    contentMarkdown: data.contentMarkdown,
-                    description: data.description,
-                    doctorId: data.doctorId
-                })
+                if (data.action == 'CREATE') {
+                    await db.Markdown.create({
+                        contentHTML: data.contentHTML,
+                        contentMarkdown: data.contentMarkdown,
+                        description: data.description,
+                        doctorId: data.doctorId
+                    })
+                } else {
+                    if (data.action == 'EDIT') {
+                        let doctorMarkdown = await db.Markdown.findOne({
+                            where: { doctorId: data.doctorId },
+                            raw: false
+                        })
+                        if (doctorMarkdown) {
+                            doctorMarkdown.contentHTML = data.contentHTML;
+                            doctorMarkdown.contentMarkdown = data.contentMarkdown;
+                            doctorMarkdown.description = data.description;
+                            await doctorMarkdown.save();
+                        }
+
+                    }
+                }
+
 
                 resolve({
                     errCode: 0,
@@ -114,4 +132,52 @@ let getDetailDoctorByIdService = (inputId) => {
     })
 }
 
-module.exports = { getTopDoctorHomeService, getAllDocTor, postInforDoctorService, getDetailDoctorByIdService }
+let bulkCreateSchedule = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.arrSchedule || !data.doctorId || !data.formatDate) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing parameter!'
+                })
+            } else {
+                let schedule = data.arrSchedule;
+                if (schedule && schedule.length > 0) {
+                    schedule.map(item => {
+                        item.maxNumber = MAX_NUMBER_SCHEDULE;
+                        return item;
+                    })
+                }
+                //get all existing date
+                let existing = await db.Schedule.findAll({
+                    where: { doctorId: data.doctorId, date: data.formatDate },
+                    attributes: ['timeType', 'date', 'maxNumber', 'doctorId'],
+                    raw: true
+                })
+                //convert date
+                if (existing && existing.length > 0) {
+                    existing.map(item => {
+                        item.date = new Date(item.date).getTime();
+                        return item;
+                    })
+                }
+                //compare different
+                let toCreate = _.differenceWith(schedule, existing, (a, b) => {
+                    return a.date === b.date && a.timeType === b.timeType;
+                })
+                //create data
+                if (toCreate && toCreate.length > 0) {
+                    await db.Schedule.bulkCreate(toCreate);
+                }
+                resolve({
+                    errCode: 0,
+                    errMessage: 'OK'
+                })
+            }
+
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+module.exports = { getTopDoctorHomeService, getAllDocTor, postInforDoctorService, getDetailDoctorByIdService, bulkCreateSchedule }
