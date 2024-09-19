@@ -6,6 +6,7 @@ import userService from '../../../services/userService';
 import { DEFAULT_INTL_CONFIG } from 'react-intl/src/utils';
 import { lang } from 'moment';
 import { LANGUAGES } from '../../../utils';
+import DoctorSchedule from './DoctorSchedule';
 
 class DetailDoctor extends Component {
     constructor(props) {
@@ -18,7 +19,7 @@ class DetailDoctor extends Component {
         if (this.props.match && this.props.match.params && this.props.match.params.id) {
             let id = this.props.match.params.id;
             let res = await userService.getDetailInforDoctor(id);
-            console.log(res.data)
+            // console.log(res.data)
             if (res && res.errCode === 0) {
                 this.setState({
                     detailDoctor: res.data
@@ -30,8 +31,8 @@ class DetailDoctor extends Component {
 
     }
     render() {
-        console.log(this.props.match.params.id);
         let { detailDoctor } = this.state;
+        // console.log('detaildoctor', detailDoctor);
         let language = this.props.language;
         let nameVi = '', nameEn = '';
         if (detailDoctor && detailDoctor.positionData) {
@@ -60,6 +61,12 @@ class DetailDoctor extends Component {
                         </div>
                     </div>
                     <div className="schedule-doctor">
+                        <div className='content-left'>
+                            <DoctorSchedule doctorIdFromParent={detailDoctor && detailDoctor.id ? detailDoctor.id : -1} />
+                        </div>
+                        <div className='content-right'>
+
+                        </div>
                     </div>
                     <div className="detail-infor-doctor">
                         {detailDoctor && detailDoctor.Markdown &&

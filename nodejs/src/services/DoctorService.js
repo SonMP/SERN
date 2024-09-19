@@ -1,5 +1,5 @@
 import db from "../models";
-import _ from 'lodash';
+import _, { reject } from 'lodash';
 require('dotenv').config();
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
 let getTopDoctorHomeService = (limitInput) => {
@@ -155,15 +155,15 @@ let bulkCreateSchedule = (data) => {
                     raw: true
                 })
                 //convert date
-                if (existing && existing.length > 0) {
-                    existing.map(item => {
-                        item.date = new Date(item.date).getTime();
-                        return item;
-                    })
-                }
+                // if (existing && existing.length > 0) {
+                //     existing.map(item => {
+                //         item.date = new Date(item.date).getTime();
+                //         return item;
+                //     })
+                // }
                 //compare different
                 let toCreate = _.differenceWith(schedule, existing, (a, b) => {
-                    return a.date === b.date && a.timeType === b.timeType;
+                    return +a.date === +b.date && a.timeType === b.timeType;
                 })
                 //create data
                 if (toCreate && toCreate.length > 0) {
@@ -180,4 +180,36 @@ let bulkCreateSchedule = (data) => {
         }
     })
 }
-module.exports = { getTopDoctorHomeService, getAllDocTor, postInforDoctorService, getDetailDoctorByIdService, bulkCreateSchedule }
+
+let getScheduleByDate = (doctorId, date) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId || !date) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing parameter'
+                })
+            } else {
+                let data = await db.Schedule.findAll({
+                    where: {
+                        doctorId: doctorId,
+                        date: date
+                    },
+                    include: [
+                        { model: db.Allcode, as: 'timeTypeData', attributes: ['valueEn', 'valueVi'] }
+                    ],
+                    raw: false,
+                    nest: true
+                })
+                if (!data) data = [];
+                resolve({
+                    errCode: 0,
+                    data: data
+                })
+            }
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+module.exports = { getTopDoctorHomeService, getAllDocTor, postInforDoctorService, getDetailDoctorByIdService, bulkCreateSchedule, getScheduleByDate }
