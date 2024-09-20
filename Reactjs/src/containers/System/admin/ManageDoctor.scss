@@ -24,6 +24,7 @@
             opacity: 0.8;
         }
     }
+
     .create-content-doctor {
         margin-top: 20px;
         margin-bottom: 30px;
@@ -39,10 +40,10 @@
             opacity: 0.8;
         }
     }
+
     .more-infor {
         display: flex;
         gap: 15px;
-        padding-bottom: 15px;
 
         .content-left {
             width: 40%;
@@ -51,5 +52,14 @@
         .content-right {
             width: 60%;
         }
+    }
+
+    .more-infor-extra {
+        padding-bottom: 20px;
+
+        .select {
+            padding-top: 10px;
+        }
+
     }
 }
