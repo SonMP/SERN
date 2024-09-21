@@ -57,6 +57,7 @@ let postInforDoctorService = (data) => {
                     errMessage: 'Missing parameter'
                 })
             } else {
+                //upsert markdown
                 if (data.action == 'CREATE') {
                     await db.Markdown.create({
                         contentHTML: data.contentHTML,
@@ -76,11 +77,36 @@ let postInforDoctorService = (data) => {
                             doctorMarkdown.description = data.description;
                             await doctorMarkdown.save();
                         }
-
                     }
                 }
 
-
+                //upsert doctor-infor
+                let doctorInfor = await db.Doctor_Infor.findOne({
+                    where: { doctorId: data.doctorId },
+                    raw: false
+                })
+                if (doctorInfor) {
+                    //update
+                    doctorInfor.doctorId = data.doctorId;
+                    doctorInfor.priceId = data.selectedPrice;
+                    doctorInfor.paymentId = data.selectedPayment;
+                    doctorInfor.provinceId = data.selectedProvince;
+                    doctorInfor.addressClinic = data.addressClinic;
+                    doctorInfor.nameClinic = data.nameClinic;
+                    doctorInfor.note = data.note;
+                    await doctorInfor.save();
+                } else {
+                    //create
+                    await db.Doctor_Infor.create({
+                        doctorId: data.doctorId,
+                        priceId: data.selectedPrice,
+                        paymentId: data.selectedPayment,
+                        provinceId: data.selectedProvince,
+                        addressClinic: data.addressClinic,
+                        nameClinic: data.nameClinic,
+                        note: data.note,
+                    })
+                }
                 resolve({
                     errCode: 0,
                     errMessage: 'Save infor doctor succeed!'

@@ -190,7 +190,7 @@ export const fetchTopDoctor = () => {
     return (async (dispatch, getState) => {
         try {
             let res = await userService.getTopDoctorService('');
-            console.log(res);
+            // console.log(res);
             if (res && res.errCode === 0) {
                 dispatch(fetchTopDocTorSuccess(res.data))
             } else {
@@ -217,7 +217,7 @@ export const fetchAllDoctor = () => {
     return (async (dispatch, getState) => {
         try {
             let res = await userService.getAllDocTorService();
-            console.log(res);
+            // console.log(res);
             if (res && res.errCode === 0) {
                 dispatch(fetchAllDocTorSuccess(res.data))
             } else {
@@ -271,7 +271,7 @@ export const fetchAllScheduleTime = () => {
     return (async (dispatch, getState) => {
         try {
             let res = await userService.getAllCodeService('TIME');
-            console.log(res);
+            // console.log(res);
             if (res && res.errCode === 0) {
                 dispatch({
                     type: actionTypes.FETCH_ALLCODE_SCHEDULE_TIME_SUCCESS,
