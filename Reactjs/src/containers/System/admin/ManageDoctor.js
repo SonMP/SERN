@@ -155,28 +155,32 @@ class ManageDoctor extends Component {
                 addressClinic: this.state.addressClinic,
                 note: this.state.note,
             })
-            this.setState({
-                contentMarkdown: '',
-                contentHTML: '',
-                selectedOption: '',
-                description: '',
-                hasOldData: false,
-
-                selectedPrice: '',
-                selectedPayment: '',
-                selectedProvince: '',
-                nameClinic: '',
-                addressClinic: '',
-                note: '',
-            })
         }
 
     }
     handleChangeSelected = async (selectedOption) => {
-        this.setState({
-            selectedOption
-        })
+        this.setState({ selectedOption })
         let res = await userService.getDetailInforDoctor(selectedOption.value);
+        let { listPrice, listPayment, listProvince } = this.state;
+        let selectedPrice = '', selectedPayment = '', selectedProvince = '', nameClinic = '', addressClinic = '', note = '', priceId = '', paymentId = '', provinceId = '';
+        if (res.data.Doctor_Infor) {
+            nameClinic = res.data.Doctor_Infor.nameClinic;
+            addressClinic = res.data.Doctor_Infor.addressClinic;
+            note = res.data.Doctor_Infor.note;
+            priceId = res.data.Doctor_Infor.priceId;
+            paymentId = res.data.Doctor_Infor.paymentId;
+            provinceId = res.data.Doctor_Infor.provinceId;
+
+            selectedPrice = listPrice.find(item => {
+                return item && item.value === priceId;
+            })
+            selectedPayment = listPayment.find(item => {
+                return item && item.value === paymentId;
+            })
+            selectedProvince = listProvince.find(item => {
+                return item && item.value === provinceId;
+            })
+        }
         if (res && res.data && res.data.Markdown) {
             let markdown = res.data.Markdown
             this.setState({
@@ -184,6 +188,12 @@ class ManageDoctor extends Component {
                 contentHTML: markdown.contentHTML,
                 description: markdown.description,
                 hasOldData: true,
+                nameClinic: nameClinic,
+                addressClinic: addressClinic,
+                note: note,
+                selectedPrice: selectedPrice,
+                selectedPayment: selectedPayment,
+                selectedProvince: selectedProvince
             })
         } else {
             this.setState({
@@ -191,6 +201,12 @@ class ManageDoctor extends Component {
                 contentHTML: '',
                 description: '',
                 hasOldData: false,
+                nameClinic: '',
+                addressClinic: '',
+                note: '',
+                selectedPrice: '',
+                selectedPayment: '',
+                selectedProvince: ''
             })
         }
     }
@@ -212,8 +228,7 @@ class ManageDoctor extends Component {
     render() {
         let { hasOldData, listPayment, listPrice, listProvince, listDoctors, selectedOption } = this.state;
         let language = this.props.language;
-        console.log('ec', this.state);
-
+        // console.log('ec', this.state);
         return (
             <div className='manage-doctor-container'>
                 <div className='manage-doctor-title'>
@@ -267,16 +282,19 @@ class ManageDoctor extends Component {
                     <div className='select col-4 form-group'>
                         <label><FormattedMessage id='admin.manage-doctor.nameClinic' /> </label>
                         <input className='form-control'
+                            value={this.state.nameClinic}
                             onChange={(event) => this.handleOnChangeText(event, 'nameClinic')} />
                     </div>
                     <div className='select col-4 form-group'>
                         <label><FormattedMessage id='admin.manage-doctor.addressClinic' /> </label>
                         <input className='form-control'
+                            value={this.state.addressClinic}
                             onChange={(event) => this.handleOnChangeText(event, 'addressClinic')} />
                     </div>
                     <div className='select col-4 form-group'>
                         <label><FormattedMessage id='admin.manage-doctor.note' /> </label>
                         <input className='form-control'
+                            value={this.state.note}
                             onChange={(event) => this.handleOnChangeText(event, 'note')} />
                     </div>
                 </div>

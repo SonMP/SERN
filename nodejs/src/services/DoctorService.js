@@ -138,7 +138,18 @@ let getDetailDoctorByIdService = (inputId) => {
                             model: db.Markdown,
                             attributes: ['description', 'contentHTML', 'contentMarkdown']
                         },
-                        { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueVi'] }
+                        { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueVi'] },
+                        {
+                            model: db.Doctor_Infor,
+                            attributes: {
+                                exclude: ['doctorId', 'id']
+                            },
+                            include: [
+                                { model: db.Allcode, as: 'priceData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Allcode, as: 'paymentData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Allcode, as: 'provinceData', attributes: ['valueEn', 'valueVi'] },
+                            ]
+                        },
                     ],
                     raw: false,
                     nest: true
@@ -238,4 +249,42 @@ let getScheduleByDate = (doctorId, date) => {
         }
     })
 }
-module.exports = { getTopDoctorHomeService, getAllDocTor, postInforDoctorService, getDetailDoctorByIdService, bulkCreateSchedule, getScheduleByDate }
+
+let getDoctorExtraInforById = (idInput) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!idInput) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing parameter!'
+                })
+            } else {
+                console.log(idInput);
+                let data = await db.Doctor_Infor.findOne({
+                    where: { doctorId: idInput },
+                    attributes: {
+                        exclude: ['doctorId', 'id']
+                    },
+                    include: [
+                        { model: db.Allcode, as: 'priceData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.Allcode, as: 'paymentData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.Allcode, as: 'provinceData', attributes: ['valueEn', 'valueVi'] },
+                    ],
+                    raw: false,
+                    nest: true
+                })
+                if (!data) data = {}
+                resolve({
+                    errCode: 0,
+                    data: data
+                })
+            }
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+module.exports = {
+    getTopDoctorHomeService, getAllDocTor, postInforDoctorService,
+    getDetailDoctorByIdService, bulkCreateSchedule, getScheduleByDate, getDoctorExtraInforById
+}

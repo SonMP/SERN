@@ -21,7 +21,7 @@ class DocTorSchedule extends Component {
         this.setState({
             allDays: arrDate
         })
-        console.log('arrday', arrDate);
+        // console.log('arrday', arrDate);
     }
     async componentDidUpdate(prevProps, prevState, snapshot) {
         if (prevProps.language !== this.props.language) {
@@ -90,7 +90,7 @@ class DocTorSchedule extends Component {
     render() {
         let { allDays, allAvailableTime } = this.state;
         let { language } = this.props;
-        console.log('aaa', allAvailableTime);
+        // console.log('aaa', allAvailableTime);
         return (
             <>
                 <div className='doctor-schedule-container'>

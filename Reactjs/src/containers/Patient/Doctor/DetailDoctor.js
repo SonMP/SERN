@@ -7,6 +7,7 @@ import { DEFAULT_INTL_CONFIG } from 'react-intl/src/utils';
 import { lang } from 'moment';
 import { LANGUAGES } from '../../../utils';
 import DoctorSchedule from './DoctorSchedule';
+import DoctorExtraInfor from './DoctorExtraInfor';
 
 class DetailDoctor extends Component {
     constructor(props) {
@@ -67,7 +68,7 @@ class DetailDoctor extends Component {
                             <DoctorSchedule doctorIdFromParent={currentDoctorId} />
                         </div>
                         <div className='content-right'>
-
+                            <DoctorExtraInfor doctorIdFromParent={currentDoctorId} />
                         </div>
                     </div>
                     <div className="detail-infor-doctor">
