@@ -6,14 +6,17 @@ import { FormattedMessage } from 'react-intl';
 import { LANGUAGES } from '../../../utils';
 import userService from '../../../services/userService';
 import './DocTorSchedule.scss';
-
+import BookingModal from './Modal/BookingModal';
+import { indexOf } from 'lodash';
 
 class DocTorSchedule extends Component {
     constructor(props) {
         super(props);
         this.state = {
             allDays: [],
-            allAvailableTime: []
+            allAvailableTime: [],
+            isShowModalBooking: false,
+            dataScheduleTimeModal: {}
         }
     }
     componentDidMount() {
@@ -87,8 +90,21 @@ class DocTorSchedule extends Component {
             }
         }
     }
+
+    showModalBooking = (time) => {
+        this.setState({
+            isShowModalBooking: true,
+            dataScheduleTimeModal: time
+        })
+        // console.log('check modal booking', time)
+    }
+    closeModalBooking = () => {
+        this.setState({
+            isShowModalBooking: false
+        })
+    }
     render() {
-        let { allDays, allAvailableTime } = this.state;
+        let { allDays, allAvailableTime, isShowModalBooking, dataScheduleTimeModal } = this.state;
         let { language } = this.props;
         // console.log('aaa', allAvailableTime);
         return (
@@ -122,10 +138,21 @@ class DocTorSchedule extends Component {
                                 <>
                                     <div className='time-content-btn'>
                                         {allAvailableTime.map((item, index) => {
-                                            let timeDisplay = language === LANGUAGES.VI ? item.timeTypeData.valueVi : item.timeTypeData.valueEn
+                                            let isShow = true;
+                                            let timeDisplay = language === LANGUAGES.VI ? item.timeTypeData.valueVi : item.timeTypeData.valueEn;
+                                            let now = 5;
+                                            let timeShow = parseInt(timeDisplay.substring(timeDisplay.indexOf('-') + 1, timeDisplay.indexOf(':', timeDisplay.indexOf('-'))));
+                                            if (timeDisplay.includes('PM')) {
+                                                timeShow = timeShow + 12;
+                                            }
+                                            if (timeShow <= now + 1) {
+                                                isShow = false;
+                                            }
+                                            if (!isShow) return (<></>)
                                             return (
                                                 <button key={index}
                                                     className={language === LANGUAGES.VI ? 'btn-vie' : 'btn-en'}
+                                                    onClick={() => this.showModalBooking(item)}
                                                 >
                                                     {timeDisplay}
                                                 </button>
@@ -145,6 +172,12 @@ class DocTorSchedule extends Component {
                         </div>
                     </div>
                 </div>
+                <BookingModal
+                    isShowModal={isShowModalBooking}
+                    closeModal={this.closeModalBooking}
+                    dataTime={dataScheduleTimeModal}
+                    doctorId={this.props.doctorIdFromParent}
+                />
             </>
         );
     }
