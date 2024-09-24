@@ -228,7 +228,7 @@ class ManageDoctor extends Component {
     render() {
         let { hasOldData, listPayment, listPrice, listProvince, listDoctors, selectedOption } = this.state;
         let language = this.props.language;
-        // console.log('ec', this.state);
+        // console.log('ec', listPrice);
         return (
             <div className='manage-doctor-container'>
                 <div className='manage-doctor-title'>
@@ -261,6 +261,7 @@ class ManageDoctor extends Component {
                             options={listPrice}
                             placeholder={<FormattedMessage id='admin.manage-doctor.price' />} />
                     </div>
+
                     <div className='select col-4 form-group'>
                         <label><FormattedMessage id='admin.manage-doctor.payment' /> </label>
                         <Select

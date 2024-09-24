@@ -24,13 +24,24 @@
             height: 100%;
 
             .row {
-                div {
+
+
+                .input {
                     padding-top: 10px;
 
                     label {
                         padding-bottom: 5px;
                     }
                 }
+
+                .select {
+                    padding-top: 10px;
+
+                    label {
+                        padding-bottom: 5px;
+                    }
+                }
+
             }
         }
 
@@ -60,4 +71,8 @@
 
 
     }
+}
+
+.react-select__value-container {
+    height: 3rem;
 }

@@ -138,6 +138,7 @@ class DocTorSchedule extends Component {
                                 <>
                                     <div className='time-content-btn'>
                                         {allAvailableTime.map((item, index) => {
+                                            let { language } = this.props;
                                             let isShow = true;
                                             let timeDisplay = language === LANGUAGES.VI ? item.timeTypeData.valueVi : item.timeTypeData.valueEn;
                                             let now = 5;
