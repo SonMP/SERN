@@ -18,6 +18,7 @@ class ManageSpecialty extends Component {
             descriptionHTML: '',
             descriptionMarkdown: ''
         }
+        this.fileInputRef = React.createRef();
     }
     async componentDidMount() {
     }
@@ -53,6 +54,13 @@ class ManageSpecialty extends Component {
         let res = await userService.createNewSpecialty(this.state);
         if (res && res.errCode === 0) {
             toast.success('Add new specialty succeed!');
+            this.setState({
+                name: '',
+                imageBase64: '',
+                descriptionHTML: '',
+                descriptionMarkdown: ''
+            })
+            this.fileInputRef.current.value = '';
         } else {
             toast.error('Something wrongs.....');
             console.log(res)
@@ -72,6 +80,7 @@ class ManageSpecialty extends Component {
                     <div className='col-6 form-group'>
                         <label>Ảnh</label>
                         <input className='form-control' type='file'
+                            ref={this.fileInputRef}
                             onChange={(event) => this.handleOnChangeImage(event)} />
                     </div>
                     <div className='col-12 mt-3'>

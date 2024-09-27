@@ -94,6 +94,8 @@ let postInforDoctorService = (data) => {
                     doctorInfor.addressClinic = data.addressClinic;
                     doctorInfor.nameClinic = data.nameClinic;
                     doctorInfor.note = data.note;
+                    doctorInfor.specialtyId = data.specialtyId;
+                    doctorInfor.clinicId = data.clinicId;
                     await doctorInfor.save();
                 } else {
                     //create
@@ -105,6 +107,8 @@ let postInforDoctorService = (data) => {
                         addressClinic: data.addressClinic,
                         nameClinic: data.nameClinic,
                         note: data.note,
+                        specialtyId: data.specialtyId,
+                        clinicId: data.clinicId,
                     })
                 }
                 resolve({

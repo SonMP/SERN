@@ -1,4 +1,7 @@
+import { reject } from "lodash"
 import db from "../models"
+import { where } from "sequelize"
+import { errorMonitor } from "nodemailer/lib/xoauth2"
 let createSpecialty = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -24,5 +27,57 @@ let createSpecialty = (data) => {
         }
     })
 }
-
-module.exports = { createSpecialty }
+let getSpecialty = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let data = await db.Specialty.findAll();
+            if (data && data.length > 0) {
+                data.map(item => {
+                    item.image = new Buffer(item.image, 'base64').toString('binary');
+                    return item;
+                })
+            }
+            resolve({
+                errCode: 0,
+                errMessage: 'OK',
+                data
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+let editSpecialty = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.id) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing parameter!'
+                })
+            }
+            let specialty = await db.Specialty.findOne({
+                where: { id: data.id },
+                raw: false
+            })
+            if (data && data.image) {
+                data.image = new Buffer(data.image, 'base64').toString('binary');
+            }
+            if (specialty) {
+                specialty.name = data.name;
+                specialty.image = data.image;
+                specialty.descriptionHTML = data.descriptionHTML;
+                specialty.descriptionMarkdown = data.descriptionMarkdown;
+                await specialty.save();
+            }
+            resolve({
+                errCode: 0,
+                errMessage: 'OK',
+                specialty
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+module.exports = { createSpecialty, getSpecialty, editSpecialty }
