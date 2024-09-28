@@ -141,6 +141,7 @@ class DocTorSchedule extends Component {
                                             let { language } = this.props;
                                             let isShow = true;
                                             let timeDisplay = language === LANGUAGES.VI ? item.timeTypeData.valueVi : item.timeTypeData.valueEn;
+                                            // let now = new Date().getHours();
                                             let now = 5;
                                             let timeShow = parseInt(timeDisplay.substring(timeDisplay.indexOf('-') + 1, timeDisplay.indexOf(':', timeDisplay.indexOf('-'))));
                                             if (timeDisplay.includes('PM')) {
