@@ -19,8 +19,14 @@ class DocTorSchedule extends Component {
             dataScheduleTimeModal: {}
         }
     }
-    componentDidMount() {
+    async componentDidMount() {
         let arrDate = this.getArrDays(this.props.language);
+        if (this.props.doctorIdFromParent) {
+            let res = await userService.getScheduleByDate(this.props.doctorIdFromParent, arrDate[0].value);
+            this.setState({
+                allAvailableTime: res.data ? res.data : []
+            })
+        }
         this.setState({
             allDays: arrDate
         })

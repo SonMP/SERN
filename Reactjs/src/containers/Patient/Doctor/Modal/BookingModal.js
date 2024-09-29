@@ -176,7 +176,9 @@ class BookingModal extends Component {
                                 <ProfileDoctor
                                     doctorId={doctorId}
                                     isShowDescription={false}
-                                    dataTime={dataTime} />
+                                    dataTime={dataTime}
+                                    isShowLinkProfile={false}
+                                    isShowPrice={true} />
                             </div>
                             <div className="row">
                                 <div className="input col-6 form-group">

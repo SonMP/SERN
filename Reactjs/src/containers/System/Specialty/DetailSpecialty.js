@@ -18,7 +18,8 @@ class DetailSpecialty extends Component {
             arrDoctorId: [],
             dataSpecialty: {},
             listProvince: [],
-            selectedProvince: ''
+            selectedProvince: '',
+            isExpandDescription: false,
         }
     }
     async componentDidMount() {
@@ -29,6 +30,15 @@ class DetailSpecialty extends Component {
                 location: 'ALL'
             });
             let resProvince = await userService.getAllCodeService('PROVINCE');
+            let dataProvince = resProvince.data;
+            if (dataProvince && dataProvince.length > 0) {
+                dataProvince.unshift({
+                    keyMap: "ALL",
+                    type: "PROVINCE",
+                    valueEn: "ALL",
+                    valueVi: "Toàn Quốc"
+                })
+            }
             if (res && res.errCode === 0 && resProvince.errCode === 0) {
                 let arrDoctorId = [];
                 let data = res.data;
@@ -44,7 +54,7 @@ class DetailSpecialty extends Component {
                 this.setState({
                     dataSpecialty: data,
                     arrDoctorId: arrDoctorId,
-                    listProvince: resProvince.data,
+                    listProvince: dataProvince,
                 })
             }
         }
@@ -54,14 +64,42 @@ class DetailSpecialty extends Component {
 
         }
     }
-    handleOnChangeProvince = (event) => {
+    handleOnChangeProvince = async (event) => {
+        if (this.props.match && this.props.match.params && this.props.match.params.id) {
+            let id = this.props.match.params.id;
+            let location = event.target.value;
+            let res = await userService.getDetailSpecialtyById({
+                id: id,
+                location: location
+            })
+            if (res && res.errCode === 0) {
+                let data = res.data;
+                let arrDoctorId = [];
+                if (data && !_.isEmpty(data)) {
+                    let arr = data.doctorSpecialty;
+                    if (arr && arr.length > 0) {
+                        arr.map(item => {
+                            return arrDoctorId.push(item.doctorId);
+                        })
+                    }
+                }
+                this.setState({
+                    dataSpecialty: data,
+                    arrDoctorId: arrDoctorId,
+                    selectedProvince: event.target.value
+                })
+            }
+
+        }
+    }
+    toggleExpand = () => {
         this.setState({
-            selectedProvince: event.target.value
+            isExpandDescription: !this.state.isExpandDescription
         })
     }
     render() {
-        let { arrDoctorId, dataSpecialty, listProvince, selectedProvince } = this.state;
-        console.log('province:', this.state);
+        let { arrDoctorId, dataSpecialty, listProvince, isExpandDescription } = this.state;
+        console.log('province:', this.state.arrDoctorId);
         let { language } = this.props;
         let htmlClean = DOMpurify.sanitize(dataSpecialty.descriptionHTML);
         return (
@@ -72,13 +110,14 @@ class DetailSpecialty extends Component {
                         <div className='description-specialty'>
                             {dataSpecialty && !_.isEmpty(dataSpecialty)
                                 &&
+                                <div>
+                                    <div className={`text-description ${!isExpandDescription ? 'expanded' : 'clamped'}`} dangerouslySetInnerHTML={{ __html: htmlClean }}></div>
+                                    <div className='btn-expand' onClick={this.toggleExpand}> {!isExpandDescription ? 'Xem thêm' : 'Ẩn đi'}</div>
+                                </div>
 
-                                <div dangerouslySetInnerHTML={{ __html: htmlClean }}></div>
                             }
-
-
                         </div>
-                        <div className='search_doctor'>
+                        <div className='search-doctor'>
                             <select onChange={(event) => this.handleOnChangeProvince(event)}>
                                 {listProvince && listProvince.length > 0
                                     && listProvince.map((item, index) => {
@@ -99,6 +138,8 @@ class DetailSpecialty extends Component {
                                                 <ProfileDoctor
                                                     doctorId={item}
                                                     isShowDescription={true}
+                                                    isShowLinkProfile={true}
+                                                    isShowPrice={false}
                                                 />
                                             </div>
                                         </div>
