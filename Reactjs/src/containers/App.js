@@ -23,6 +23,7 @@ import DetailDoctor from './Patient/Doctor/DetailDoctor';
 import Doctor from '../routes/Doctor';
 import VerifyBooking from '../../src/containers/Patient/VerifyBooking';
 import DetailSpecialty from './System/Specialty/DetailSpecialty';
+import DetailClinic from './System/Clinic/DetailClinic';
 
 class App extends Component {
 
@@ -60,6 +61,7 @@ class App extends Component {
                                     <Route path={path.HOMEPAGE} component={(HomePage)} />
                                     <Route path={path.DETAIL_DOCTOR} component={DetailDoctor} />
                                     <Route path={path.DETAIL_SPECIALTY} component={DetailSpecialty} />
+                                    <Route path={path.DETAIL_CLINIC} component={DetailClinic} />
                                     <Route path={path.VERIFY_EMAIL_BOOKING} component={VerifyBooking} />
                                 </Switch>
                             </CustomScrollbars>

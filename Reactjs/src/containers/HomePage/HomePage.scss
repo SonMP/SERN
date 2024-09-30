@@ -17,6 +17,24 @@
 
     &.section-medical-facility {
         background: white;
+
+        .section-customize {
+
+            .clinic-name {
+                padding-top: 8px;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                -webkit-line-clamp: 1;
+            }
+
+            .clinic-name:hover {
+                color: rgb(131, 122, 255);
+                ;
+            }
+        }
+
     }
 
     &.section-outstanding-doctor {
