@@ -16,7 +16,7 @@ let sendEmail = async (dataSend) => {
         from: '"Sơn MP 👻" <thaison1962003@gmail.com>', // sender address
         to: dataSend.receiverEmail, // list of receivers
         subject: "Thông tin đặt lịch khám bệnh ✔", // Subject line
-        text: "Hello world?", // plain text body
+        // text: "Hello world?",
         html: getBodyHTMLEmail(dataSend),
     });
 
@@ -55,4 +55,53 @@ let getBodyHTMLEmail = (dataSend) => {
     }
     return result;
 }
-module.exports = { sendEmail }
+
+let sendAttachment = async (dataSend) => {
+    let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false, // true for port 465, false for other ports
+        auth: {
+            user: process.env.EMAIL_APP,
+            pass: process.env.EMAIL_APP_PASSWORD,
+        },
+    });
+    // send mail with defined transport object  
+    let info = await transporter.sendMail({
+        from: '"Sơn MP 👻" <thaison1962003@gmail.com>', // sender address
+        to: dataSend.email, // list of receivers
+        subject: "Kết quả đặt lịch khám bệnh ✔", // Subject line
+        html: getBodyHTMLEmailRemedy(dataSend),
+        attachments: [
+            {
+                filename: `Remedy-${dataSend.patientName}-${new Date().getTime()}}.png`,
+                content: Buffer.from(dataSend.imageBase64.split(',')[1], 'base64')
+            }
+        ]
+    });
+
+}
+let getBodyHTMLEmailRemedy = (dataSend) => {
+    let result = '';
+    if (dataSend.language === 'vi') {
+        result = `
+        <h3>Xin chào ${dataSend.patientName}!</h3>
+        <p>Bạn nhận được email này vì đã đặt lịch khám bệnh online trên BookingCare thành công</p>
+        <p>Thông tin hóa đơn được gửi trong file đính kèm:</p>
+     
+    
+        <div> Xin chân thành cảm ơn</div>
+    `
+    }
+    if (dataSend.language === 'en') {
+        result = `
+        <h3>Dear ${dataSend.patientName}!</h3>
+        <p>You received this email because you booked an online medical appointment on the A <p>Information to schedule an appointment:</p>
+        <p>blabla
+        </p>
+        <div> Sincerely thank</div>
+    `
+    }
+    return result;
+}
+module.exports = { sendEmail, sendAttachment }

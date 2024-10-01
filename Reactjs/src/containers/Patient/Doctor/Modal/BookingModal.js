@@ -112,7 +112,8 @@ class BookingModal extends Component {
         return ''
     }
     handleConfirmBooking = async () => {
-        let date = new Date(this.state.birthday).getTime();
+        let date = this.props.dataTime.date;
+        let birthDay = new Date(this.state.birthday).getTime();
         let timeString = this.buildTimeBooking(this.props.dataTime);
         let doctorName = this.buildNameDoctor(this.props.dataTime);
         let res = await userService.postBookingAppointment({
@@ -122,6 +123,7 @@ class BookingModal extends Component {
             address: this.state.address,
             reason: this.state.reason,
             date: date,
+            birthDay: birthDay,
             selectedGender: this.state.selectedGender.value,
             doctorId: this.state.doctorId,
             timeType: this.state.timeType,
@@ -146,7 +148,6 @@ class BookingModal extends Component {
         } else {
             toast.error('Booking failed!')
         }
-        console.log('button', this.state)
     }
 
     render() {
