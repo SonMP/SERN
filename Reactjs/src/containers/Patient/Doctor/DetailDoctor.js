@@ -8,6 +8,9 @@ import { lang } from 'moment';
 import { LANGUAGES } from '../../../utils';
 import DoctorSchedule from './DoctorSchedule';
 import DoctorExtraInfor from './DoctorExtraInfor';
+import LikeAndShare from '../SocialPlugin/LikeAndShare';
+import Comment from '../SocialPlugin/Comment';
+require('dotenv').config();
 
 class DetailDoctor extends Component {
     constructor(props) {
@@ -29,10 +32,13 @@ class DetailDoctor extends Component {
                 })
             }
         }
-    }
-    componentDidUpdate(prevProps, prevState, snapshot) {
 
     }
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.state.detailDoctor !== prevState.detailDoctor) {
+        }
+    }
+
     render() {
         let { detailDoctor, currentDoctorId } = this.state;
         // console.log('detaildoctor', detailDoctor);
@@ -43,6 +49,8 @@ class DetailDoctor extends Component {
             nameVi = `${detailDoctor.positionData.valueVi}, ${detailDoctor.lastName} ${detailDoctor.firstName}`;
             nameEn = `${detailDoctor.positionData.valueEn}, ${detailDoctor.firstName} ${detailDoctor.lastName}`;
         }
+        let currentURL = +process.env.REACT_APP_IS_LOCALHOST === 1 ?
+            "https://developers.facebook.com/docs/plugins/" : window.location.href;
         return (
             <>
                 <HomeHeader isShowBanner={false} />
@@ -60,7 +68,10 @@ class DetailDoctor extends Component {
                                     <span>
                                         {detailDoctor.Markdown.description}
                                     </span>}
+                                <LikeAndShare
+                                    dataHref={currentURL} />
                             </div>
+
                         </div>
                     </div>
                     <div className="schedule-doctor">
@@ -78,6 +89,9 @@ class DetailDoctor extends Component {
                         }
                     </div>
                     <div className="comment-doctor">
+                        <Comment
+                            dataHref={currentURL}
+                            width={'100%'} />
                     </div>
                 </div>
 

@@ -9,7 +9,10 @@
 
         .content-left {
             width: 20%;
-            background: center center no-repeat;
+            // background: center center no-repeat;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
             background-size: cover;
             width: 120px;
             height: 120px;
@@ -32,6 +35,19 @@
 
         .down {
             padding-top: 10px;
+
+            .like-share-plugin {
+                margin: 10px 0 20px 0;
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 10px;
+            }
+
+            .like-share-plugin iframe {
+                width: auto !important;
+                display: inline-block;
+            }
         }
     }
 
@@ -56,6 +72,8 @@
         border-top: 1px solid #ddd;
         border-bottom: 1px solid #ddd;
 
+        h1,
+        h2,
         h3 {
             font-size: 17px;
         }
@@ -66,6 +84,6 @@
     }
 
     .comment-doctor {
-        height: 50px;
+        padding: 10px 100px;
     }
 }
